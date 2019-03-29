@@ -1,0 +1,17 @@
+67900a5952d8c966fd8e1f66ebf02fda *DESCRIPTION
+910d0bf8b6f5070b11f331cace23d493 *NAMESPACE
+95ca44a87303cd546a0301f0469b44f1 *R/xnat_api.R
+22453145fdfeaab3941ef1338798ca37 *README.md
+2414e0d44f79fe2d30298a6619b1aa93 *build/vignette.rds
+12989c3685ab0e862214bbd6da38ae92 *inst/doc/rxnat.R
+a46ae6a6efdc62c231dbd1f5fa82f217 *inst/doc/rxnat.Rmd
+0482200da1a883219e147db06235ae2c *inst/doc/rxnat.html
+b2947d3ee653cab4d9d46b5950f04633 *man/download_xnat_dir.Rd
+1d6d752a191be23d51504bb2cc19807c *man/download_xnat_file.Rd
+beccfb7e2a5a3a243f6d2f79267c7b5a *man/get_scan_resources.Rd
+ff979b2507d0255523ae8f00c2c59a9c *man/query_scan_resources.Rd
+b397021d2717785ff2d36b6540d4564b *man/string2csv.Rd
+2883368aa2e3f68d78bb727d23fb4ec4 *man/xnat_connection.Rd
+05d85ad07a20035b5a7b5caf8beebb83 *tests/testthat.R
+3a090174c45f3f55751f127ef70da4bf *tests/testthat/test-xnat-api.R
+a46ae6a6efdc62c231dbd1f5fa82f217 *vignettes/rxnat.Rmd

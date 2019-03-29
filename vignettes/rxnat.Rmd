@@ -1,0 +1,157 @@
+---
+title: "Using the Rxnat Package"
+author: "Adi Gherman"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the Rxnat Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+<style>
+body {
+text-align: justify}
+</style>
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(Rxnat)
+```
+
+## What is XNAT?
+XNAT is an open source imaging informatics platform developed by the Neuroinformatics Research Group at Washington University. XNAT was originally developed in the Buckner Lab at Washington University, now at Harvard University. It facilitates common management, productivity, and quality assurance tasks for imaging and associated data. Thanks to its extensibility, XNAT can be used to support a wide range of imaging-based projects.
+
+## Who is using XNAT?
+There are several projects that currently use XNAT to manage a vast number of datasets. 
+
+* [NITRC](https://nitrc.org) - Neuroimaging Informatics Tools and Resources Clearinghouse is currently a free one-stop-shop collaboratory for science researchers that need resources such as neuroimaging analysis software, publicly available data sets, or computing power. 
+* [ConnectomeDB](https://db.humanconnectome.org/) -  The Human Connectome Project (HCP) is a project to construct a map of the complete structural and functional neural connections in vivo within and across individuals. 
+* [XNAT Central](https://central.xnat.org) - XNAT Central is a database for sharing neuroimaging and related data with select collaborators or the general community. 
+
+For a more complete list of XNAT implementations around the world you can click [here](https://www.xnat.org/about/xnat-implementations.php).
+
+## Installing the Rxnat package
+
+You can install `Rxnat` from github with:
+``` {r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("adigherman/Rxnat")
+```
+
+## Accessing XNAT Data
+
+### How to get a username/password for a XNAT project
+XNAT projects can be public or private. In order to access a private repository a set of credentials are required. To obtain a user name and password combo you will need to visit:
+
+* HCP (Human Connectome Project) - [new account request](https://db.humanconnectome.org) and click on the Register button
+* NITRC - [new account request](https://www.nitrc.org/account/register.php). Some of the NITRC hosted projects will require additional access requests but this can be easily requested using the NITRC web interface for each project.
+* XNAT Central - this is mostly public, but you can also perform a [new account request](https://central.xnat.org/app/template/Register.vm) if any of the projects require it. 
+
+### Establishing a XNAT connection with the `Rxnat` package
+The `Rxnat` package will accept credentials provided in the function call or read from the system environment.
+
+#### Function parameters
+To establish a connection using the credentials as function parameters we can call the `xnat_connect` function:
+``` {r, eval = FALSE}
+nitrc <- xnat_connect('https://nitrc.org/ir', username='XXXX', password='YYYY', xnat_name=NULL)
+```
+
+#### Setting up system environment variables
+To use system environment variables we need to add them to the `.Renviron` file located in the user's home folder. Use `Sys.getenv("HOME")` to get the path (for unix/osx users the location can be easily accessed with ~, eg. `vi ~/.Renviron`).
+The `Rxnat` package will be able to automatically read / use a system environment variable provided the following format is used: `XXXX_Rxnat_USER` and `XXXX_Rxnat_PASS`. `XXXX` is provided as an argument when an XNAT connection is initiated. 
+
+As an example `NITRC` is used as argument and the system environment variables names should be `NITRC_Rxnat_USER`, and `NITRC_Rxnat_PASS`.
+``` {r, eval = FALSE}
+nitrc <- xnat_connect('https://nitrc.org/ir', xnat_name='NITRC')
+```
+
+NITRC has some public image repositories, a username and password are not required to connect/query them. To create a connection to the public NITRC resources we call the `xnat_connect` function.
+
+``` {r}
+nitrc <- xnat_connect('https://nitrc.org/ir')
+```
+
+## Get list of available XNAT projects
+Once a connection is established using the `xnat_connect` function a list of available projects can be easily retrieved by using the class internal function `projects`:
+
+``` {r}
+nitrc_projects <- nitrc$projects()
+head(nitrc_projects[c('ID','name')])
+```
+
+## Retrieve a list with all accessible subjects
+A full list of subjects for each XNAT connection can be retrieved using the `subjects` function:
+
+``` {r}
+nitrc_subjects <- nitrc$subjects()
+head(nitrc_subjects)
+```
+
+## Get full list of experiments
+To obtain a full list of experiments the `experiments` function will be used:
+
+``` {r}
+nitrc_experiments <- nitrc$experiments()
+head(nitrc_experiments)
+```
+
+## Get the complete list of resources for a specific experiment
+The scan resources for an experiment can be retrieved using the `get_xnat_experiment_resources` function:
+
+``` {r}
+xnat_E00026_resources <- nitrc$get_xnat_experiment_resources('xnat_E00026')
+head(xnat_E00026_resources[c('Name','URI')])
+```
+
+## Query the XNAT projects for matching entries
+If you are interested just in a subset of subjects/experiments that match a certain criteria you can use the `query_scan_resources` function. Accepted query parameters are:
+
+- subject_ID - subject ID identifier 
+- project - the project ID
+- age - subject's age
+- experiment_ID - experiment ID identifier
+- type - type of image scan
+- TR - repetition time
+- TE - echo time
+- TI - inversion time
+- flip - flip status
+- voxel_res - overall image voxel resolution
+- voxel_res_X - voxel X resolution
+- voxel_res_Y - voxel Y resolution
+- voxel_res_Z - voxel Z resolution
+- orientation - image orientation
+
+To retrieve a list of all subject IDs and associated experiment IDs we can use the `query_scan_resources` function. In the example below, we are querying the HCP XNAT database for all subjects belonging the the HCP_500 project with scans taken at age 26.
+
+``` {r}
+nitrc_age_26 <- query_scan_resources(nitrc,age='26')
+head(nitrc_age_26[c("subject_ID","experiment_ID", "Project", "Age")])
+```
+
+## Getting Data: Download a single scan image/resource file
+To download a single file we will use the `download_file` function. Using the first `experiment_ID` from the above example, we will get all scan resources associated with it first.
+
+``` {r, eval = FALSE}
+scan_resources <- get_scan_resources(nitrc,'xnat_E00026')
+scan_resources[1,c("Name","URI")]
+```
+
+To download the resource file (100307_3T_BIAS_BC.nii.gz) we will do:
+
+``` {r, eval = FALSE}
+> download_xnat_file(nitrc,"/data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/3967/files/scan_mprage_anonymized.nii.gz", file_dir = tempdir())
+[1] "/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/scan_mprage_anonymized.nii.gz"
+```
+
+## Getting Data: Download a directory of data
+To download all the T1 type images from experiment ConnectomeDB_E03657 we will use the `download_xnat_dir` function.
+
+``` {r, eval = FALSE}
+download_xnat_dir(nitrc, experiment_ID='NITRC_IR_E10507',scan_type='T2', file_dir = tempdir(), verbose=TRUE)
+/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/NITRC_IR_E10507.zip
+Downloading: 5.2 MB     [1] "/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/NITRC_IR_E10507.zip"
+```
