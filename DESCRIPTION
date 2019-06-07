@@ -1,6 +1,6 @@
 Package: Rxnat
 Type: Package
-Version: 1.0.5
+Version: 1.0.6
 Title: Queries and Extracts Images from Extensible Neuroimaging Archive
         Toolkit Public/Private Datasets
 Description: Allows communication with Extensible Neuroimaging Archive Toolkit <https://www.xnat.org>. 
@@ -17,7 +17,7 @@ RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 BugReports: https://github.com/adigherman/Rxnat/issues
 NeedsCompilation: no
-Packaged: 2019-06-05 15:05:55 UTC; adi
+Packaged: 2019-06-07 19:50:02 UTC; adi
 Author: Adi Gherman [aut, cre]
 Repository: CRAN
-Date/Publication: 2019-06-05 15:30:19 UTC
+Date/Publication: 2019-06-07 21:30:04 UTC
