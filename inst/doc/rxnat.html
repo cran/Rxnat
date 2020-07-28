@@ -12,7 +12,7 @@
 
 <meta name="author" content="Adi Gherman" />
 
-<meta name="date" content="2020-04-15" />
+<meta name="date" content="2020-07-28" />
 
 <title>Using the Rxnat Package</title>
 
@@ -20,9 +20,9 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -32,14 +32,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -48,9 +50,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -301,7 +303,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Using the Rxnat Package</h1>
 <h4 class="author">Adi Gherman</h4>
-<h4 class="date">2020-04-15</h4>
+<h4 class="date">2020-07-28</h4>
 
 
 
@@ -327,8 +329,9 @@ text-align: justify}
 <div id="installing-the-rxnat-package" class="section level2">
 <h2>Installing the Rxnat package</h2>
 <p>You can install <code>Rxnat</code> from github with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages(&quot;devtools&quot;)</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;adigherman/Rxnat&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(devtools)</span>
+<span id="cb1-3"><a href="#cb1-3"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;adigherman/Rxnat&quot;</span>)</span></code></pre></div>
 </div>
 <div id="accessing-xnat-data" class="section level2">
 <h2>Accessing XNAT Data</h2>
@@ -347,83 +350,83 @@ text-align: justify}
 <div id="function-parameters" class="section level4">
 <h4>Function parameters</h4>
 <p>To establish a connection using the credentials as function parameters we can call the <code>xnat_connect</code> function:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">'https://nitrc.org/ir'</span>, <span class="dt">username=</span><span class="st">'XXXX'</span>, <span class="dt">password=</span><span class="st">'YYYY'</span>, <span class="dt">xnat_name=</span><span class="ot">NULL</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">&#39;https://nitrc.org/ir&#39;</span>, <span class="dt">username=</span><span class="st">&#39;XXXX&#39;</span>, <span class="dt">password=</span><span class="st">&#39;YYYY&#39;</span>, <span class="dt">xnat_name=</span><span class="ot">NULL</span>)</span></code></pre></div>
 </div>
 <div id="setting-up-system-environment-variables" class="section level4">
 <h4>Setting up system environment variables</h4>
 <p>To use system environment variables we need to add them to the <code>.Renviron</code> file located in the user’s home folder. Use <code>Sys.getenv(&quot;HOME&quot;)</code> to get the path (for unix/osx users the location can be easily accessed with ~, eg. <code>vi ~/.Renviron</code>). The <code>Rxnat</code> package will be able to automatically read / use a system environment variable provided the following format is used: <code>XXXX_Rxnat_USER</code> and <code>XXXX_Rxnat_PASS</code>. <code>XXXX</code> is provided as an argument when an XNAT connection is initiated.</p>
 <p>As an example <code>NITRC</code> is used as argument and the system environment variables names should be <code>NITRC_Rxnat_USER</code>, and <code>NITRC_Rxnat_PASS</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">'https://nitrc.org/ir'</span>, <span class="dt">xnat_name=</span><span class="st">'NITRC'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">&#39;https://nitrc.org/ir&#39;</span>, <span class="dt">xnat_name=</span><span class="st">&#39;NITRC&#39;</span>)</span></code></pre></div>
 <p>NITRC has some public image repositories, a username and password are not required to connect/query them. To create a connection to the public NITRC resources we call the <code>xnat_connect</code> function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">'https://nitrc.org/ir'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>nitrc &lt;-<span class="st"> </span><span class="kw">xnat_connect</span>(<span class="st">&#39;https://nitrc.org/ir&#39;</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
 <div id="get-list-of-available-xnat-projects" class="section level2">
 <h2>Get list of available XNAT projects</h2>
 <p>Once a connection is established using the <code>xnat_connect</code> function a list of available projects can be easily retrieved by using the class internal function <code>projects</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">nitrc_projects &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">projects</span>()</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">head</span>(nitrc_projects[<span class="kw">c</span>(<span class="st">'ID'</span>,<span class="st">'name'</span>)])</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt;            ID                                                         name</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; 1       ABIDE                                                        ABIDE</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; 2    ABIDE_II                                                     ABIDE_II</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; 3         GSP                           Brain Genomics Superstruct Project</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; 4        PING Pediatric Imaging, Neurocognition, and Genetics (PING) Study</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 5    adhd_200                                                     ADHD-200</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 6 beijing_enh                                             Beijing Enhanced</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>nitrc_projects &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">projects</span>()</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">head</span>(nitrc_projects[<span class="kw">c</span>(<span class="st">&#39;ID&#39;</span>,<span class="st">&#39;name&#39;</span>)])</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt;            ID                                                         name</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; 1       ABIDE                                                        ABIDE</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt; 2    ABIDE_II                                                     ABIDE_II</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; 3         GSP                           Brain Genomics Superstruct Project</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; 4        PING Pediatric Imaging, Neurocognition, and Genetics (PING) Study</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; 5    adhd_200                                                     ADHD-200</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; 6 beijing_enh                                             Beijing Enhanced</span></span></code></pre></div>
 </div>
 <div id="retrieve-a-list-with-all-accessible-subjects" class="section level2">
 <h2>Retrieve a list with all accessible subjects</h2>
 <p>A full list of subjects for each XNAT connection can be retrieved using the <code>subjects</code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">nitrc_subjects &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">subjects</span>()</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">head</span>(nitrc_subjects)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt;          project          ID       label gender handedness yob education ses</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; 1 cs_schizbull08 xnat_S02582 BPDwPsy_065      M          R  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; 2 cs_schizbull08 xnat_S02583 BPDwPsy_066      F          L  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; 3 cs_schizbull08 xnat_S02584 BPDwPsy_067      M          R  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; 4 cs_schizbull08 xnat_S02585 BPDwPsy_068      M          R  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; 5 cs_schizbull08 xnat_S02586 BPDwPsy_069      F          R  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; 6 cs_schizbull08 xnat_S02587 BPDwPsy_070      M          R  NA        NA  NA</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;                              group race ethnicity</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; 1 Bipolar Disorder: With Psychosis   NA        NA</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 2 Bipolar Disorder: With Psychosis   NA        NA</span></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co">#&gt; 3 Bipolar Disorder: With Psychosis   NA        NA</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co">#&gt; 4 Bipolar Disorder: With Psychosis   NA        NA</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="co">#&gt; 5 Bipolar Disorder: With Psychosis   NA        NA</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="co">#&gt; 6 Bipolar Disorder: With Psychosis   NA        NA</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>nitrc_subjects &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">subjects</span>()</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">head</span>(nitrc_subjects)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt;          project          ID       label gender handedness yob education ses</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; 1 cs_schizbull08 xnat_S02582 BPDwPsy_065      M          R  NA        NA  NA</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; 2 cs_schizbull08 xnat_S02583 BPDwPsy_066      F          L  NA        NA  NA</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; 3 cs_schizbull08 xnat_S02584 BPDwPsy_067      M          R  NA        NA  NA</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; 4 cs_schizbull08 xnat_S02585 BPDwPsy_068      M          R  NA        NA  NA</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; 5 cs_schizbull08 xnat_S02586 BPDwPsy_069      F          R  NA        NA  NA</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; 6 cs_schizbull08 xnat_S02587 BPDwPsy_070      M          R  NA        NA  NA</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt;                              group race ethnicity</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; 1 Bipolar Disorder: With Psychosis   NA        NA</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; 2 Bipolar Disorder: With Psychosis   NA        NA</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; 3 Bipolar Disorder: With Psychosis   NA        NA</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; 4 Bipolar Disorder: With Psychosis   NA        NA</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 5 Bipolar Disorder: With Psychosis   NA        NA</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; 6 Bipolar Disorder: With Psychosis   NA        NA</span></span></code></pre></div>
 </div>
 <div id="get-full-list-of-experiments" class="section level2">
 <h2>Get full list of experiments</h2>
 <p>To obtain a full list of experiments the <code>experiments</code> function will be used:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">nitrc_experiments &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">experiments</span>()</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">head</span>(nitrc_experiments)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt;          project     subject          ID               type          label age</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; 1 cs_schizbull08 BPDwPsy_065 xnat_E02577 xnat:mrSessionData BPDwPsy_065_MR   7</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; 2 cs_schizbull08 BPDwPsy_066 xnat_E02579 xnat:mrSessionData BPDwPsy_066_MR  11</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; 3 cs_schizbull08 BPDwPsy_067 xnat_E02581 xnat:mrSessionData BPDwPsy_067_MR   8</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; 4 cs_schizbull08 BPDwPsy_068 xnat_E02583 xnat:mrSessionData BPDwPsy_068_MR   7</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; 5 cs_schizbull08 BPDwPsy_069 xnat_E02585 xnat:mrSessionData BPDwPsy_069_MR  16</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; 6 cs_schizbull08 BPDwPsy_070 xnat_E02587 xnat:mrSessionData BPDwPsy_070_MR  13</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>nitrc_experiments &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">experiments</span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">head</span>(nitrc_experiments)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt;          project     subject          ID               type          label age</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; 1 cs_schizbull08 BPDwPsy_065 xnat_E02577 xnat:mrSessionData BPDwPsy_065_MR   7</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co">#&gt; 2 cs_schizbull08 BPDwPsy_066 xnat_E02579 xnat:mrSessionData BPDwPsy_066_MR  11</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co">#&gt; 3 cs_schizbull08 BPDwPsy_067 xnat_E02581 xnat:mrSessionData BPDwPsy_067_MR   8</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co">#&gt; 4 cs_schizbull08 BPDwPsy_068 xnat_E02583 xnat:mrSessionData BPDwPsy_068_MR   7</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co">#&gt; 5 cs_schizbull08 BPDwPsy_069 xnat_E02585 xnat:mrSessionData BPDwPsy_069_MR  16</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="co">#&gt; 6 cs_schizbull08 BPDwPsy_070 xnat_E02587 xnat:mrSessionData BPDwPsy_070_MR  13</span></span></code></pre></div>
 </div>
 <div id="get-the-complete-list-of-resources-for-a-specific-experiment" class="section level2">
 <h2>Get the complete list of resources for a specific experiment</h2>
 <p>The scan resources for an experiment can be retrieved using the <code>get_xnat_experiment_resources</code> function:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">xnat_E00026_resources &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">get_xnat_experiment_resources</span>(<span class="st">'xnat_E00026'</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">head</span>(xnat_E00026_resources[<span class="kw">c</span>(<span class="st">'Name'</span>,<span class="st">'URI'</span>)])</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt;                               Name</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; 1                 scan_rest.nii.gz</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; 2                 scan_rest.nii.gz</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; 3 scan_mprage_skullstripped.nii.gz</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#&gt; 4 scan_mprage_skullstripped.nii.gz</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#&gt; 5    scan_mprage_anonymized.nii.gz</span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#&gt; 6    scan_mprage_anonymized.nii.gz</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#&gt;                                                                                                                    URI</span></a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#&gt; 1                                 /data/experiments/xnat_E00026/scans/func_rest/resources/11987/files/scan_rest.nii.gz</span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#&gt; 2                                  /data/experiments/xnat_E00026/scans/func_rest/resources/3969/files/scan_rest.nii.gz</span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#&gt; 3 /data/experiments/xnat_E00026/scans/anat_mprage_skullstripped/resources/11986/files/scan_mprage_skullstripped.nii.gz</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#&gt; 4  /data/experiments/xnat_E00026/scans/anat_mprage_skullstripped/resources/3968/files/scan_mprage_skullstripped.nii.gz</span></a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"><span class="co">#&gt; 5       /data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/11985/files/scan_mprage_anonymized.nii.gz</span></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co">#&gt; 6        /data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/3967/files/scan_mprage_anonymized.nii.gz</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>xnat_E00026_resources &lt;-<span class="st"> </span>nitrc<span class="op">$</span><span class="kw">get_xnat_experiment_resources</span>(<span class="st">&#39;xnat_E00026&#39;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">head</span>(xnat_E00026_resources[<span class="kw">c</span>(<span class="st">&#39;Name&#39;</span>,<span class="st">&#39;URI&#39;</span>)])</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;                               Name</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; 1                 scan_rest.nii.gz</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; 2                 scan_rest.nii.gz</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; 3 scan_mprage_skullstripped.nii.gz</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; 4 scan_mprage_skullstripped.nii.gz</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; 5    scan_mprage_anonymized.nii.gz</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; 6    scan_mprage_anonymized.nii.gz</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt;                                                                                                                    URI</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; 1                                 /data/experiments/xnat_E00026/scans/func_rest/resources/11987/files/scan_rest.nii.gz</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; 2                                  /data/experiments/xnat_E00026/scans/func_rest/resources/3969/files/scan_rest.nii.gz</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt; 3 /data/experiments/xnat_E00026/scans/anat_mprage_skullstripped/resources/11986/files/scan_mprage_skullstripped.nii.gz</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; 4  /data/experiments/xnat_E00026/scans/anat_mprage_skullstripped/resources/3968/files/scan_mprage_skullstripped.nii.gz</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; 5       /data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/11985/files/scan_mprage_anonymized.nii.gz</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; 6        /data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/3967/files/scan_mprage_anonymized.nii.gz</span></span></code></pre></div>
 </div>
 <div id="query-the-xnat-projects-for-matching-entries" class="section level2">
 <h2>Query the XNAT projects for matching entries</h2>
@@ -445,31 +448,31 @@ text-align: justify}
 <li>orientation - image orientation</li>
 </ul>
 <p>To retrieve a list of all subject IDs and associated experiment IDs we can use the <code>query_scan_resources</code> function. In the example below, we are querying the HCP XNAT database for all subjects belonging the the HCP_500 project with scans taken at age 26.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">nitrc_age_<span class="dv">26</span> &lt;-<span class="st"> </span><span class="kw">query_scan_resources</span>(nitrc,<span class="dt">age=</span><span class="st">'26'</span>)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">head</span>(nitrc_age_<span class="dv">26</span>[<span class="kw">c</span>(<span class="st">&quot;subject_ID&quot;</span>,<span class="st">&quot;experiment_ID&quot;</span>, <span class="st">&quot;Project&quot;</span>, <span class="st">&quot;Age&quot;</span>)])</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt;        subject_ID   experiment_ID Project Age</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; 1 NITRC_IR_S05244 NITRC_IR_E10507     ixi  26</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; 2 NITRC_IR_S05267 NITRC_IR_E10530     ixi  26</span></a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="co">#&gt; 3 NITRC_IR_S05270 NITRC_IR_E10533     ixi  26</span></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; 4 NITRC_IR_S05278 NITRC_IR_E10541     ixi  26</span></a>
-<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt; 5 NITRC_IR_S05394 NITRC_IR_E10657     ixi  26</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; 6 NITRC_IR_S05427 NITRC_IR_E10690     ixi  26</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>nitrc_age_<span class="dv">26</span> &lt;-<span class="st"> </span><span class="kw">query_scan_resources</span>(nitrc,<span class="dt">age=</span><span class="st">&#39;26&#39;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="kw">head</span>(nitrc_age_<span class="dv">26</span>[<span class="kw">c</span>(<span class="st">&quot;subject_ID&quot;</span>,<span class="st">&quot;experiment_ID&quot;</span>, <span class="st">&quot;Project&quot;</span>, <span class="st">&quot;Age&quot;</span>)])</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt;        subject_ID   experiment_ID Project Age</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; 1 NITRC_IR_S05244 NITRC_IR_E10507     ixi  26</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; 2 NITRC_IR_S05267 NITRC_IR_E10530     ixi  26</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; 3 NITRC_IR_S05270 NITRC_IR_E10533     ixi  26</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; 4 NITRC_IR_S05278 NITRC_IR_E10541     ixi  26</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 5 NITRC_IR_S05394 NITRC_IR_E10657     ixi  26</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; 6 NITRC_IR_S05427 NITRC_IR_E10690     ixi  26</span></span></code></pre></div>
 </div>
 <div id="getting-data-download-a-single-scan-imageresource-file" class="section level2">
 <h2>Getting Data: Download a single scan image/resource file</h2>
 <p>To download a single file we will use the <code>download_file</code> function. Using the first <code>experiment_ID</code> from the above example, we will get all scan resources associated with it first.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">scan_resources &lt;-<span class="st"> </span><span class="kw">get_scan_resources</span>(nitrc,<span class="st">'xnat_E00026'</span>)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">scan_resources[<span class="dv">1</span>,<span class="kw">c</span>(<span class="st">&quot;Name&quot;</span>,<span class="st">&quot;URI&quot;</span>)]</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>scan_resources &lt;-<span class="st"> </span><span class="kw">get_scan_resources</span>(nitrc,<span class="st">&#39;xnat_E00026&#39;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>scan_resources[<span class="dv">1</span>,<span class="kw">c</span>(<span class="st">&quot;Name&quot;</span>,<span class="st">&quot;URI&quot;</span>)]</span></code></pre></div>
 <p>To download the resource file (100307_3T_BIAS_BC.nii.gz) we will do:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw">download_xnat_file</span>(nitrc,<span class="st">&quot;/data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/3967/files/scan_mprage_anonymized.nii.gz&quot;</span>, <span class="dt">file_dir =</span> <span class="kw">tempdir</span>())</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">[<span class="dv">1</span>] <span class="st">&quot;/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/scan_mprage_anonymized.nii.gz&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="op">&gt;</span><span class="st"> </span><span class="kw">download_xnat_file</span>(nitrc,<span class="st">&quot;/data/experiments/xnat_E00026/scans/anat_mprage_anonymized/resources/3967/files/scan_mprage_anonymized.nii.gz&quot;</span>, <span class="dt">file_dir =</span> <span class="kw">tempdir</span>())</span>
+<span id="cb11-2"><a href="#cb11-2"></a>[<span class="dv">1</span>] <span class="st">&quot;/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/scan_mprage_anonymized.nii.gz&quot;</span></span></code></pre></div>
 </div>
 <div id="getting-data-download-a-directory-of-data" class="section level2">
 <h2>Getting Data: Download a directory of data</h2>
 <p>To download all the T1 type images from experiment ConnectomeDB_E03657 we will use the <code>download_xnat_dir</code> function.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">download_xnat_dir</span>(nitrc, <span class="dt">experiment_ID=</span><span class="st">'NITRC_IR_E10507'</span>,<span class="dt">scan_type=</span><span class="st">'T2'</span>, <span class="dt">file_dir =</span> <span class="kw">tempdir</span>(), <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="op">/</span>var<span class="op">/</span>folders<span class="op">/</span>kr<span class="op">/</span>05bm5krj0r3fpwxfdmx4xthm0000gn<span class="op">/</span>T<span class="op">/</span><span class="er">/</span>RtmpTNSN5E<span class="op">/</span>NITRC_IR_E10507.zip</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">Downloading<span class="op">:</span><span class="st"> </span><span class="fl">5.2</span> MB     [<span class="dv">1</span>] <span class="st">&quot;/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/NITRC_IR_E10507.zip&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">download_xnat_dir</span>(nitrc, <span class="dt">experiment_ID=</span><span class="st">&#39;NITRC_IR_E10507&#39;</span>,<span class="dt">scan_type=</span><span class="st">&#39;T2&#39;</span>, <span class="dt">file_dir =</span> <span class="kw">tempdir</span>(), <span class="dt">verbose=</span><span class="ot">TRUE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="op">/</span>var<span class="op">/</span>folders<span class="op">/</span>kr<span class="op">/</span>05bm5krj0r3fpwxfdmx4xthm0000gn<span class="op">/</span>T<span class="op">/</span><span class="er">/</span>RtmpTNSN5E<span class="op">/</span>NITRC_IR_E10507.zip</span>
+<span id="cb12-3"><a href="#cb12-3"></a>Downloading<span class="op">:</span><span class="st"> </span><span class="fl">5.2</span> MB     [<span class="dv">1</span>] <span class="st">&quot;/var/folders/kr/05bm5krj0r3fpwxfdmx4xthm0000gn/T//RtmpTNSN5E/NITRC_IR_E10507.zip&quot;</span></span></code></pre></div>
 </div>
 
 

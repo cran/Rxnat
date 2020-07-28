@@ -5,8 +5,10 @@ knitr::opts_chunk$set(
 )
 library(Rxnat)
 
+
 ## ---- eval = FALSE------------------------------------------------------------
 #  # install.packages("devtools")
+#  library(devtools)
 #  devtools::install_github("adigherman/Rxnat")
 
 ## ---- eval = FALSE------------------------------------------------------------
