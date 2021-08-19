@@ -265,6 +265,7 @@ get_scan_parameters_search_xml <- function(subject_ID = NULL,
 #' xxx is provided by the \code{xnat_name} parameter
 #' @param xnat_name prefix to use for retrieving the proper username/pass
 #' system variables for a specific XNAT server
+#' @param ... additional arguments passed to \code{\link{curlPerform}}.
 #' @examples
 #' ## Connect to the NITRC.ORG database
 #' \dontrun{xnat_connect('https://nitrc.org/ir', xnat_name='NITRC')}
@@ -277,11 +278,12 @@ get_scan_parameters_search_xml <- function(subject_ID = NULL,
 #' @importFrom httr set_cookies timeout
 #' @importFrom tibble as_tibble
 #' @export
-xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
+xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL, ...)
 {
   xnat_call <- function(request, customrequest = 'GET', data='') {
     if(is.null(jsid)) {
-      stop('not connected')
+      message('not connected')
+      return(NULL)
     }
     reader <- basicTextGatherer()
     header <- basicTextGatherer()
@@ -294,7 +296,8 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
                 customrequest = customrequest,
                 postfields = data,
                 ssl.verifypeer = FALSE,
-                cookie = paste('JSESSIONID=', jsid, sep = ''))
+                cookie = paste('JSESSIONID=', jsid, sep = ''),
+                ...)
     msg = ""
     if (!is.null(xnat_name)) {
       msg = paste0(
@@ -304,22 +307,25 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
         )
       )
     }
-    warning(
-      paste0(
-        "No username was given when running xnat_connect, you may be able to see ", 
-        "public information from XNAT server. ", "To authenticate, pass",
-        " in username/password ", msg
+    if (!credentials_given) {
+      warning(
+        paste0(
+          "No username was given when running xnat_connect, you may be able to see ", 
+          "public information from XNAT server. ", "To authenticate, pass",
+          " in username/password ", msg
+        )
       )
-    )
+    }
     
-    if(parseHTTPHeader(header$value())['status'] >= 400) {
+    if (parseHTTPHeader(header$value())['status'] >= 400) {
       msg = paste0("XNAT call failed, message: ", 
                    parseHTTPHeader(header$value())['statusMessage'])
       if (!credentials_given) {
         msg = paste0(msg, ".  You may need to run xnat_connect again with", 
                      " credentials.")
       }
-      stop(msg)
+      message(msg)
+      return(NULL)
       # message("No internet connection or data source broken.")
       # return(NULL)
     }
@@ -397,7 +403,8 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
     }
     if(!is.null(project)) {
       if(!project %in% projects()$ID) {
-        stop(sprintf('unknown project "%s"', project))
+        message(sprintf('unknown project "%s"', project))
+        return(NULL)
       }
       rv <- .subjects[.subjects$project==project,]
       rownames(rv) <- 1:nrow(rv)
@@ -481,7 +488,8 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
     }
     if(!is.null(e_project)) {
       if(!e_project %in% projects()$ID) {
-        stop(sprintf('unknown project "%s"', e_project))
+        message(sprintf('unknown project "%s"', e_project))
+        return(NULL)
       }
       if(!is.null(e_subject)) {
         if(!e_subject %in% subjects(e_project)$label) {
@@ -641,7 +649,8 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
     curlPerform(url = paste(base_url, '/', sep = ''),
                 writefunction = reader$update,
                 headerfunction = header$update,
-                ssl.verifypeer = FALSE)
+                ssl.verifypeer = FALSE,
+                ...)
     jsid <<- NULL
     for(h in strsplit(header$value(), '\n')[[1]]) {
       if(substring(h, 1, 23) == 'Set-Cookie: JSESSIONID=') {
@@ -649,7 +658,8 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
       }
     }
     if(is.null(jsid)) {
-      stop('error starting session')
+      message('error starting session')
+      return(NULL)
     }
   } else {
     credentials_given = TRUE
@@ -658,12 +668,14 @@ xnat_connect <- function(base_url, username=NULL, password=NULL, xnat_name=NULL)
                 headerfunction = header$update,
                 ssl.verifypeer = FALSE,
                 userpwd = paste(username, password, sep = ':'),
-                httpauth=1L)
+                httpauth=1L,
+                ...)
     status = parseHTTPHeader(header$value())['status']
-    if(status == 401) {
-      stop('bad username/password')
-    } else if(status != 200) {
-      stop('error authenticating')
+    if (parseHTTPHeader(header$value())['status'] >= 400) {
+      msg = paste0("XNAT call failed, message: ", 
+                   parseHTTPHeader(header$value())['statusMessage'])   
+      message(msg)
+      return(NULL)
     }
     jsid <- reader$value()
   }
